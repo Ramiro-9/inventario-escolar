@@ -6,11 +6,14 @@ from app.routers import ubicaciones, cursos, stock, resumen, exportar, auth
 from app import models
 from app.auth import hash_password
 
-app = FastAPI(title="Inventario Escolar")
+app = FastAPI(title="Inventario Escolar", version="3.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://inventario-frontend-oh8c.onrender.com",
+        "http://localhost:5173",
+    ],
     allow_methods=["*"],
     allow_headers=["*"],
 )
