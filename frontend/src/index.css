@@ -1,0 +1,71 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: system-ui, sans-serif;
+  background: #f4f6f9;
+  color: #1a1a2e;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #1a1a2e;
+  color: white;
+  padding: 0.9rem 2rem;
+}
+
+.nav-brand { font-size: 1.1rem; font-weight: 600; }
+
+.nav-links { display: flex; gap: 1.5rem; }
+
+.nav-links a {
+  color: #adb5bd;
+  text-decoration: none;
+  font-size: 0.95rem;
+  padding-bottom: 2px;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: white;
+  border-bottom-color: #4cc9f0;
+}
+
+.container {
+  max-width: 960px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+h1 { font-size: 1.5rem; margin-bottom: 1.5rem; }
+
+/* Tabla */
+table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+th { background: #1a1a2e; color: white; padding: 0.75rem 1rem; text-align: left; font-size: 0.85rem; }
+td { padding: 0.75rem 1rem; border-bottom: 1px solid #e9ecef; font-size: 0.9rem; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #f8f9fa; }
+
+/* Botones */
+.btn { padding: 0.45rem 1rem; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 500; }
+.btn-primary  { background: #1a1a2e; color: white; }
+.btn-danger   { background: #e63946; color: white; }
+.btn-secondary{ background: #e9ecef; color: #1a1a2e; }
+.btn:hover    { opacity: 0.85; }
+
+/* Formulario */
+.form-card { background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 1.5rem; }
+.form-row { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.form-group { display: flex; flex-direction: column; gap: 0.3rem; flex: 1; min-width: 160px; }
+label { font-size: 0.82rem; font-weight: 600; color: #495057; }
+input { padding: 0.5rem 0.75rem; border: 1px solid #ced4da; border-radius: 6px; font-size: 0.9rem; }
+input:focus { outline: none; border-color: #4cc9f0; }
+
+.form-actions { display: flex; gap: 0.75rem; }
+
+/* Alerta */
+.alert { padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1rem; font-size: 0.88rem; }
+.alert-error { background: #ffe3e3; color: #c0392b; }
