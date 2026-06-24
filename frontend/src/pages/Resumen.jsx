@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { getResumen, exportarExcel, exportarPDF } from "../api/client"
 
-const BASE = "http://localhost:8000"
+const BASE = import.meta.env.VITE_API_URL || "http://localhost:8000"
 
 async function api(path) {
   const res = await fetch(`${BASE}${path}`)

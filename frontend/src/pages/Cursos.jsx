@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { getUbicaciones } from "../api/client"
 import ModalConfirm from "../components/ModalConfirm"
 
-const BASE = "http://localhost:8000"
+const BASE = import.meta.env.VITE_API_URL || "http://localhost:8000"
 const empty = { nombre: "", turno: "", ubicacion_id: "", bancos_requeridos: 0, sillas_requeridas: 0 }
 
 const TURNO_BADGE = {
