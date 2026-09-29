@@ -34,7 +34,7 @@ def obtener(id: int, db: Session = Depends(get_db)):
     return curso
 
 @router.post("/", response_model=schemas.CursoOut, status_code=201)
-def crear(data: schemas.CursoCreate, db: Session = Depends(get_db)):
+def crear(data: schemas.CursoCreate, db: Session = Depends(get_db), _=Depends(solo_admin)):
     if not db.get(models.Ubicacion, data.ubicacion_id):
         raise HTTPException(status_code=404, detail="Ubicación no encontrada")
     _check_duplicado(db, data.ubicacion_id, data.turno)
@@ -43,11 +43,11 @@ def crear(data: schemas.CursoCreate, db: Session = Depends(get_db)):
     return curso
 
 @router.patch("/{id}", response_model=schemas.CursoOut)
-def actualizar(id: int, data: schemas.CursoUpdate, db: Session = Depends(get_db)):
+def actualizar(id: int, data: schemas.CursoUpdate, db: Session = Depends(get_db), _=Depends(solo_admin)):
     curso = db.get(models.Curso, id)
     if not curso:
         raise HTTPException(status_code=404, detail="Curso no encontrado")
-    cambios = data.model_dump(exclude_none=True)
+    cambios = data.model_dump(exclude_unset=True)
     ubi_id = cambios.get("ubicacion_id", curso.ubicacion_id)
     turno  = cambios.get("turno", curso.turno)
     if "ubicacion_id" in cambios and not db.get(models.Ubicacion, ubi_id):
@@ -59,7 +59,7 @@ def actualizar(id: int, data: schemas.CursoUpdate, db: Session = Depends(get_db)
     return curso
 
 @router.delete("/{id}", status_code=204)
-def eliminar(id: int, db: Session = Depends(get_db)):
+def eliminar(id: int, db: Session = Depends(get_db), _=Depends(solo_admin)):
     curso = db.get(models.Curso, id)
     if not curso:
         raise HTTPException(status_code=404, detail="Curso no encontrado")

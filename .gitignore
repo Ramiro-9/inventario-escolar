@@ -4,6 +4,11 @@ __pycache__/
 *.pyc
 *.pyo
 .env
+CORRECCIONES.md
+requirements-test.txt
+requirements.txt
+test/
+migrations/
 
 # Node
 frontend/node_modules/

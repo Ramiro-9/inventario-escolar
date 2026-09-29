@@ -18,7 +18,13 @@ def hash_password(plain: str) -> str:
     return bcrypt.hashpw(plain.encode(), bcrypt.gensalt()).decode()
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return bcrypt.checkpw(plain.encode(), hashed.encode())
+    # bcrypt admite como máximo 72 bytes, no 72 caracteres.
+    if not plain.strip() or len(plain.encode("utf-8")) > 72:
+        return False
+    try:
+        return bcrypt.checkpw(plain.encode(), hashed.encode())
+    except ValueError:
+        return False
 
 def crear_token(data: dict) -> str:
     payload = data.copy()

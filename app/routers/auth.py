@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
+from pydantic import BaseModel, StringConstraints, field_validator
+from typing import Annotated, Literal
+from sqlalchemy.exc import IntegrityError
 from app.database import get_db
 from app import models
 from app.auth import verify_password, crear_token, hash_password, get_usuario_actual, solo_admin
@@ -15,9 +17,18 @@ class TokenOut(BaseModel):
     username:     str
 
 class UsuarioCreate(BaseModel):
-    username: str
+    username: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=50)]
     password: str
-    rol:      str = "viewer"
+    rol: Literal["admin", "viewer"] = "viewer"
+
+    @field_validator("password")
+    @classmethod
+    def validar_password(cls, value):
+        if not value.strip():
+            raise ValueError("La contraseña no puede estar vacía")
+        if len(value.encode("utf-8")) > 72:
+            raise ValueError("La contraseña no puede superar 72 bytes UTF-8")
+        return value
 
 class UsuarioOut(BaseModel):
     id:       int
@@ -52,7 +63,13 @@ def crear_usuario(data: UsuarioCreate, db: Session = Depends(get_db), _=Depends(
         raise HTTPException(status_code=409, detail="El usuario ya existe")
     rol = models.RolUsuario.admin if data.rol == "admin" else models.RolUsuario.viewer
     u = models.Usuario(username=data.username, password=hash_password(data.password), rol=rol)
-    db.add(u); db.commit(); db.refresh(u)
+    db.add(u)
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(status_code=409, detail="El usuario ya existe") from None
+    db.refresh(u)
     return u
 
 @router.delete("/usuarios/{id}", status_code=204)

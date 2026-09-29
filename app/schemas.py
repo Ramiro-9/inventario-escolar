@@ -1,5 +1,5 @@
-from pydantic import BaseModel, Field
-from typing import Optional
+from pydantic import BaseModel, Field, StringConstraints, field_validator
+from typing import Annotated, Optional
 from enum import Enum
 from datetime import datetime
 
@@ -8,6 +8,16 @@ class TurnoTipo(str, Enum):
     tarde  = "tarde"
     noche  = "noche"
 
+Nombre = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)]
+
+class ActualizacionBase(BaseModel):
+    @field_validator("*", mode="before")
+    @classmethod
+    def rechazar_nulos_no_permitidos(cls, value, info):
+        if value is None and info.field_name not in {"turno", "descripcion"}:
+            raise ValueError("Este campo no puede ser nulo")
+        return value
+
 # ---------- Ubicacion ----------
 
 class UbicacionBase(BaseModel):
@@ -15,10 +25,10 @@ class UbicacionBase(BaseModel):
     descripcion: Optional[str] = None
 
 class UbicacionCreate(UbicacionBase):
-    pass
+    nombre: Nombre
 
-class UbicacionUpdate(BaseModel):
-    nombre:      Optional[str] = None
+class UbicacionUpdate(ActualizacionBase):
+    nombre:      Optional[Nombre] = None
     descripcion: Optional[str] = None
 
 class UbicacionOut(UbicacionBase):
@@ -35,10 +45,10 @@ class CursoBase(BaseModel):
     sillas_requeridas:  int = Field(default=0, ge=0)
 
 class CursoCreate(CursoBase):
-    pass
+    nombre: Nombre
 
-class CursoUpdate(BaseModel):
-    nombre:             Optional[str]       = None
+class CursoUpdate(ActualizacionBase):
+    nombre:             Optional[Nombre]    = None
     turno:              Optional[TurnoTipo] = None
     ubicacion_id:       Optional[int]       = None
     bancos_requeridos:  Optional[int]       = Field(default=None, ge=0)
@@ -55,7 +65,7 @@ class StockBase(BaseModel):
     bancos_total: int = Field(ge=0)
     sillas_total: int = Field(ge=0)
 
-class StockUpdate(BaseModel):
+class StockUpdate(ActualizacionBase):
     bancos_total: Optional[int] = Field(default=None, ge=0)
     sillas_total: Optional[int] = Field(default=None, ge=0)
 

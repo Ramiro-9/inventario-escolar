@@ -1,25 +1,13 @@
 import { useEffect, useState } from "react"
-import { getUbicaciones } from "../api/client"
+import { getUbicaciones, getCursos, createCurso, updateCurso, deleteCurso } from "../api/client"
 import ModalConfirm from "../components/ModalConfirm"
 
-const BASE = import.meta.env.VITE_API_URL || "http://localhost:8000"
 const empty = { nombre: "", turno: "", ubicacion_id: "", bancos_requeridos: 0, sillas_requeridas: 0 }
 
 const TURNO_BADGE = {
   "mañana": { cls: "badge-blue",   label: "Mañana" },
   "tarde":  { cls: "badge-yellow", label: "Tarde"  },
   "noche":  { cls: "badge-gray",   label: "Noche"  },
-}
-
-async function api(method, path, body) {
-  const res = await fetch(`${BASE}${path}`, {
-    method,
-    headers: { "Content-Type": "application/json" },
-    body: body ? JSON.stringify(body) : undefined,
-  })
-  if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.detail || `Error ${res.status}`) }
-  if (res.status === 204) return null
-  return res.json()
 }
 
 export default function Cursos() {
@@ -39,7 +27,7 @@ export default function Cursos() {
 
   async function cargar() {
     try {
-      const [c, u] = await Promise.all([api("GET", "/cursos/"), getUbicaciones()])
+      const [c, u] = await Promise.all([getCursos(), getUbicaciones()])
       setCursos(c); setUbicaciones(u)
     } catch (e) { setError(e.message) }
   }
@@ -64,14 +52,14 @@ export default function Cursos() {
         ubicacion_id: Number(form.ubicacion_id),
         bancos_requeridos: Number(form.bancos_requeridos),
         sillas_requeridas: Number(form.sillas_requeridas) }
-      editId ? await api("PATCH", `/cursos/${editId}`, body) : await api("POST", "/cursos/", body)
+      editId ? await updateCurso(editId, body) : await createCurso(body)
       setOk(true); cancelar(); cargar()
     } catch (e) { setError(e.message) }
     finally { setLoading(false) }
   }
 
   async function eliminar() {
-    try { await api("DELETE", `/cursos/${confirm.id}`); cargar() }
+    try { await deleteCurso(confirm.id); cargar() }
     catch (e) { setError(e.message) }
     finally { setConfirm(null) }
   }

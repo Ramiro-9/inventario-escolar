@@ -35,7 +35,7 @@ class Curso(Base):
 
     id                  = Column(Integer, primary_key=True, index=True)
     nombre              = Column(String(100), nullable=False)
-    turno               = Column(Enum(TurnoTipo), nullable=True)
+    turno               = Column(Enum(TurnoTipo, values_callable=lambda enum_cls: [item.value for item in enum_cls]), nullable=True)
     ubicacion_id        = Column(Integer, ForeignKey("ubicaciones.id"), nullable=False)
     bancos_requeridos   = Column(Integer, nullable=False, default=0)
     sillas_requeridas   = Column(Integer, nullable=False, default=0)

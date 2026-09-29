@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, NavLink, Navigate } from "react-router-dom"
 import { useState, useEffect } from "react"
-import { getUsuario, isAdmin, logout } from "./api/client"
+import { getUsuario, logout } from "./api/client"
 import RutaProtegida from "./components/RutaProtegida"
 import Login       from "./pages/Login"
 import Ubicaciones from "./pages/Ubicaciones"

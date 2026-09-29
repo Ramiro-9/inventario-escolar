@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app import models, schemas
+from app.auth import solo_admin
 
 router = APIRouter(prefix="/stock", tags=["Stock"])
 
@@ -16,9 +17,9 @@ def obtener(db: Session = Depends(get_db)):
     return _get_stock(db)
 
 @router.patch("/", response_model=schemas.StockOut)
-def actualizar(data: schemas.StockUpdate, db: Session = Depends(get_db)):
+def actualizar(data: schemas.StockUpdate, db: Session = Depends(get_db), _=Depends(solo_admin)):
     stock = _get_stock(db)
-    for k, v in data.model_dump(exclude_none=True).items():
+    for k, v in data.model_dump(exclude_unset=True).items():
         setattr(stock, k, v)
     db.commit()
     db.refresh(stock)

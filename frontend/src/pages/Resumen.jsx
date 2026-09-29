@@ -85,7 +85,6 @@ export default function Resumen() {
 
   const bSob = resumen.bancos_sobrantes
   const sSob = resumen.sillas_sobrantes
-  const selUbi    = porUbi.find(u => u.ubicacion_id === selected)
   const selCursos = cursosDet.filter(c => c.ubicacion_id === selected)
 
   // Solo aulas con cursos para el gráfico
